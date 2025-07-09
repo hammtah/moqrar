@@ -11,6 +11,17 @@ CORS(app)  # This will allow all domains by default
 # ... your routes ...
 DATA_FILE = 'data.json'
 
+@app.route('/data.json', methods=['GET'])
+def get_data():
+    if not os.path.exists(DATA_FILE):
+        return jsonify({'error': 'data.json not found'}), 404
+    with open(DATA_FILE, 'r', encoding='utf-8') as f:
+        try:
+            records = json.load(f)
+        except Exception:
+            return jsonify({'error': 'Failed to read data.json'}), 500
+    return jsonify(records)
+
 @app.route('/save_progress', methods=['POST'])
 def save_progress():
     data = request.json
