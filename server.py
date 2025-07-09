@@ -11,7 +11,7 @@ CORS(app)  # This will allow all domains by default
 # ... your routes ...
 DATA_FILE = 'data.json'
 
-@app.route('/data.json', methods=['GET'])
+@app.route('/data', methods=['GET'])
 def get_data():
     if not os.path.exists(DATA_FILE):
         return jsonify({'error': 'data.json not found'}), 404
