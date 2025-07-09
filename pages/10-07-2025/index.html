@@ -90,7 +90,7 @@
     // Only send if progress changed by at least 1%
     if (lastSentProgress !== null && Math.abs(progress - lastSentProgress) < 0.01) return;
     lastSentProgress = progress;
-    fetch('http://127.0.0.1:5000/save_progress', {
+    fetch('http://192.168.56.1:5000/save_progress', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ date, progress })
