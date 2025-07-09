@@ -90,7 +90,7 @@
     // Only send if progress changed by at least 1%
     if (lastSentProgress !== null && Math.abs(progress - lastSentProgress) < 0.01) return;
     lastSentProgress = progress;
-    fetch('https://5d9396535a9b.ngrok-free.app/save_progress', {
+    fetch('https://13ea4b67444a.ngrok-free.app/save_progress', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ date, progress })
