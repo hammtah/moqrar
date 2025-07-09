@@ -1,9 +1,16 @@
 [
     {
         "name": " رقائق القرآن  ٣٥ - ٥ ",
-        "url": "https://www.youtube.com/watch?v=1b2c3d4e5f6",
-        "image": "",
-        "date": "2023-10-01",
+        "url": "pages/2025-07-09/index.html",
+        "image": "pages/2025-07-09/images/cover.jpg",
+        "date": "2025-07-09",
+        "completed": false
+    },
+    {
+        "name": " رقائق القرآن  35 إلى 66 ",
+        "url": "pages/10-07-2025/index.html",
+        "image": "pages/10-07-2025/images/cover.jpg",
+        "date": "10-07-2025",
         "completed": false
     }
 ]

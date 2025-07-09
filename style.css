@@ -84,6 +84,8 @@
     display: flex;
     padding: .3em;
   }
- 
+ .hidden{
+    display: none;
+ }
   
    
