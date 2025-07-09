@@ -1,11 +1,13 @@
 import os
 from datetime import datetime, timedelta
 from pdf2image import convert_from_path
+import json
 
 # --- Inputs ---
 pdf_path = input("Enter the path to the PDF file: ").strip()
 start_page = int(input("Enter the start page (inclusive): ").strip())
 end_page = int(input("Enter the end page (inclusive): ").strip())
+name = input("Enter the name for the entry: ").strip()
 
 # --- Folder setup ---
 tomorrow = datetime.now() + timedelta(days=1)
@@ -82,3 +84,36 @@ with open(html_path, "w", encoding="utf-8") as f:
 """)
 
 print(f"✅ index.html created at {html_path}")
+
+# Prepare new entry data
+entry = {
+    "name": name,
+    "url": os.path.join("pages", tomorrow.strftime("%d-%m-%Y"), "index.html").replace("\\", "/"),
+    "image": os.path.join("pages", tomorrow.strftime("%d-%m-%Y"), "images", "cover.jpg").replace("\\", "/"),
+    "date": tomorrow.strftime("%d-%m-%Y"),
+    "completed": False
+}
+
+# Path to data.json (assuming it is in the current working directory)
+data_json_path = "data.json"
+
+# Read existing data or initialize empty list
+if os.path.exists(data_json_path):
+    with open(data_json_path, "r", encoding="utf-8") as f:
+        try:
+            data = json.load(f)
+            if not isinstance(data, list):
+                data = []
+        except json.JSONDecodeError:
+            data = []
+else:
+    data = []
+
+# Append the new entry
+data.append(entry)
+
+# Write back to data.json
+with open(data_json_path, "w", encoding="utf-8") as f:
+    json.dump(data, f, indent=4, ensure_ascii=False)
+
+print(f"✅ Added new entry to {data_json_path}")

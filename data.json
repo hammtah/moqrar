@@ -4,13 +4,15 @@
         "url": "pages/2025-07-09/index.html",
         "image": "pages/2025-07-09/images/cover.jpg",
         "date": "2025-07-09",
-        "completed": false
+        "completed": false,
+        "progress": 0.0
     },
     {
-        "name": " رقائق القرآن  35 إلى 66 ",
+        "name": "klsajdf",
         "url": "pages/10-07-2025/index.html",
         "image": "pages/10-07-2025/images/cover.jpg",
         "date": "10-07-2025",
-        "completed": false
+        "completed": false,
+        "progress": 0
     }
 ]

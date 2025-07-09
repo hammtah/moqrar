@@ -9,14 +9,34 @@
       font-family: sans-serif;
       display: flex;
       flex-wrap: wrap;
+      position: relative;
       justify-content: center;
+      margin: 8px;
     }
     img {
       width: 100%; 
       height: auto;
-      margin: 10px; 
+      margin-top: 10px; 
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
       border-radius: 10px;
+    }
+  </style>
+  <style>
+    #progress-bar-container {
+      position: fixed;
+      left: 8px;
+      bottom: 0;
+      width: calc(100% - 16px);
+      height: 8px;
+      background: rgba(0,0,0,0.08);
+      z-index: 1000;
+    }
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2dc27c, #2de891);
+      border-radius: 8px;
+      transition: width 0.2s;
     }
   </style>
 </head>
@@ -53,6 +73,38 @@
   <img src="images/page_64.jpg" alt="Page 64">
   <img src="images/page_65.jpg" alt="Page 65">
   <img src="images/page_66.jpg" alt="Page 66">
-
 </body>
+<div id="progress-bar-container">
+  <div id="progress-bar"></div>
+</div>
+<script>
+  let lastSentProgress = null;
+  function getDateFromPath() {
+    // Extracts the date from the folder name in the URL (e.g., /pages/10-07-2025/)
+    const match = window.location.pathname.match(/pages\/([^\/]+)\//);
+    return match ? match[1] : null;
+  }
+  function saveProgress(progress) {
+    const date = getDateFromPath();
+    if (!date) return;
+    // Only send if progress changed by at least 1%
+    if (lastSentProgress !== null && Math.abs(progress - lastSentProgress) < 0.01) return;
+    lastSentProgress = progress;
+    fetch('http://127.0.0.1:5000/save_progress', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ date, progress })
+    });
+  }
+  function updateProgressBar() {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = docHeight > 0 ? (scrollTop / docHeight) : 0;
+    document.getElementById('progress-bar').style.width = (progress * 100) + '%';
+    saveProgress(progress);
+  }
+  window.addEventListener('scroll', updateProgressBar);
+  window.addEventListener('resize', updateProgressBar);
+  document.addEventListener('DOMContentLoaded', updateProgressBar);
+</script>
 </html>
