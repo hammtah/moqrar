@@ -90,6 +90,20 @@ async function getMoqrar(date){
     // Return the first matching document
     return querySnapshot.docs[0].data();
 }
-export { saveData, loadData, renderMoqrarat, updateProgress, getMoqrar };
+
+async function updateMoqrar(date, moqrar){
+    const db = getFirestore();
+    const q = query(collection(db, "moqrarat"), where("date", "==", date));
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) {
+        console.warn('No document found with date:', date);
+        return;
+    }
+    // Update all matching documents (should be only one)
+    for (const document of querySnapshot.docs) {
+        await updateDoc(doc(db, "moqrarat", document.id), moqrar);
+    }
+}
+export { saveData, loadData, renderMoqrarat, updateProgress, getMoqrar, updateMoqrar };
 // loadData();
 // document.getElementById('save').addEventListener('click', saveData);

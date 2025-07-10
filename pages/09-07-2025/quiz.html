@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>اختبار المقرر</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    body {
+      background: #f4f4f4;
+      font-family: "Rakkas", serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    #quiz-container {
+      width: 100%;
+      max-width: 700px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      padding: 32px 24px;
+      margin-top: 40px;
+    }
+    .quiz-question {
+      margin-bottom: 2em;
+      direction: rtl;
+    }
+    .quiz-question p {
+      font-weight: bold;
+      margin-bottom: 0.5em;
+    }
+    .quiz-question ul {
+      list-style: none;
+      padding: 0;
+    }
+    .quiz-question li {
+      margin-bottom: 0.5em;
+    }
+    #submit-quiz {
+      background: #2dc27c;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.7em 2em;
+      font-size: 1.1em;
+      cursor: pointer;
+      margin-top: 1em;
+      transition: background 0.2s;
+    }
+    #submit-quiz:hover {
+      background: #198754;
+    }
+  </style>
+</head>
+<body>
+  <div id="quiz-container"></div>
+  <script type="module">
+    import { updateMoqrar } from '/firebase.js';
+    // Extract date from path: /pages/09-07-2025/quiz.html
+    const pathParts = window.location.pathname.split('/');
+    const date = pathParts[2];
+
+    async function getMoqrarByDate(date) {
+      const response = await fetch('/data.json');
+      const data = await response.json();
+      return data.find(item => item.date === date);
+    }
+
+    function renderQuiz(quiz) {
+      const container = document.getElementById('quiz-container');
+      if (!quiz) {
+        container.innerHTML = '<p style="text-align:center">لا يوجد اختبار لهذا اليوم.</p>';
+        return;
+      }
+      let html = '';
+      quiz.forEach((q, idx) => {
+        html += `<div class="quiz-question">
+          <p>${idx + 1}. ${q.question}</p>
+          <ul>
+            ${q.options.map((opt, i) => `
+              <li>
+                <label>
+                  <input type="radio" name="q${idx}" value="${i}">
+                  ${opt}
+                </label>
+              </li>
+            `).join('')}
+          </ul>
+        </div>`;
+      });
+      html += `<button id="submit-quiz">إرسال</button>`;
+      container.innerHTML = html;
+    }
+
+    async function checkAnswers(quiz, moqrar) {
+      let score = 0;
+      quiz.forEach((q, idx) => {
+        const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+        if (selected && parseInt(selected.value) === q.correct_answer_index) {
+          score++;
+        }
+      });
+      alert(`نتيجتك: ${score} من ${quiz.length}`);
+      if (score / quiz.length > 0.5) {
+        // Update completed to true in Firestore
+        try {
+          await updateMoqrar(date, { ...moqrar, completed: true });
+        } catch (err) {
+          console.error('خطأ في تحديث حالة الإنجاز:', err);
+        }
+      }
+    }
+
+    document.addEventListener('click', function(e) {
+      if (e.target && e.target.id === 'submit-quiz') {
+        getMoqrarByDate(date).then(moqrar => {
+          if (moqrar && moqrar.quiz) checkAnswers(moqrar.quiz, moqrar);
+        });
+      }
+    });
+
+    getMoqrarByDate(date).then(moqrar => {
+      if (moqrar && moqrar.quiz) {
+        renderQuiz(moqrar.quiz);
+      } else {
+        renderQuiz(null);
+      }
+    });
+  </script>
+</body>
+</html>
