@@ -3,19 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <title>اختبار المقرر</title>
-  <link rel="stylesheet" href="/style.css">
-  <style>
+  <!-- <link rel="stylesheet" href="/style.css"> -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap" rel="stylesheet">
+<style>
     body {
       background: #f4f4f4;
-      font-family: "Rakkas", serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 20px;
-    }
+      font-family: "Cairo", sans-serif;
+     }
     #quiz-container {
       width: 100%;
-      max-width: 700px;
+      max-width: 900px;
       background: #fff;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -55,11 +58,30 @@
 </head>
 <body>
   <div id="quiz-container"></div>
+  <div id="quiz-modal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:#fff;padding:2em 2em 1.5em 2em;border-radius:12px;max-width:90vw;min-width:260px;text-align:center;box-shadow:0 2px 16px rgba(0,0,0,0.18);">
+      <div id="quiz-modal-message" style="font-size:1.2em;margin-bottom:1.5em;"></div>
+      <button id="quiz-back-btn" style="background:#2dc27c;color:#fff;border:none;border-radius:6px;padding:0.7em 2em;font-size:1.1em;cursor:pointer;margin-left:1em;display:inline-flex;align-items:center;gap:0.5em;">
+        <span style="display:inline-flex;align-items:center;">
+          <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-home"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l-2 0l9 -9l9 9l-2 0" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
+        </span>
+        العودة للصفحة الرئيسية
+      </button>
+      <button id="quiz-retake-btn" style="background:#195a3b;color:#fff;border:none;border-radius:6px;padding:0.7em 2em;font-size:1.1em;cursor:pointer;display:inline-flex;align-items:center;gap:0.5em;">
+        <span style="display:inline-flex;align-items:center;">
+          <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-refresh"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></svg>
+        </span>
+        إعادة المحاولة
+      </button>
+    </div>
+  </div>
   <script type="module">
     import { updateMoqrar } from '/firebase.js';
     // Extract date from path: /pages/09-07-2025/quiz.html
     const pathParts = window.location.pathname.split('/');
     const date = pathParts[2];
+
+    let currentQuiz = null;
 
     async function getMoqrarByDate(date) {
       const response = await fetch('/data.json');
@@ -68,6 +90,7 @@
     }
 
     function renderQuiz(quiz) {
+      currentQuiz = quiz;
       const container = document.getElementById('quiz-container');
       if (!quiz) {
         container.innerHTML = '<p style="text-align:center">لا يوجد اختبار لهذا اليوم.</p>';
@@ -93,6 +116,17 @@
       container.innerHTML = html;
     }
 
+    function showQuizModal(message) {
+      const modal = document.getElementById('quiz-modal');
+      const msgDiv = document.getElementById('quiz-modal-message');
+      msgDiv.textContent = message;
+      modal.style.display = 'flex';
+    }
+
+    function hideQuizModal() {
+      document.getElementById('quiz-modal').style.display = 'none';
+    }
+
     async function checkAnswers(quiz, moqrar) {
       let score = 0;
       quiz.forEach((q, idx) => {
@@ -101,7 +135,7 @@
           score++;
         }
       });
-      alert(`نتيجتك: ${score} من ${quiz.length}`);
+      const resultMsg = `نتيجتك: ${score} من ${quiz.length}`;
       if (score / quiz.length > 0.5) {
         // Update completed to true in Firestore
         try {
@@ -110,6 +144,7 @@
           console.error('خطأ في تحديث حالة الإنجاز:', err);
         }
       }
+      showQuizModal(resultMsg);
     }
 
     document.addEventListener('click', function(e) {
@@ -117,6 +152,14 @@
         getMoqrarByDate(date).then(moqrar => {
           if (moqrar && moqrar.quiz) checkAnswers(moqrar.quiz, moqrar);
         });
+      }
+      if (e.target && e.target.id === 'quiz-back-btn') {
+        window.location.href = '/index.html';
+      }
+      if (e.target && e.target.id === 'quiz-retake-btn') {
+        hideQuizModal();
+        if (currentQuiz) renderQuiz(currentQuiz);
+        window.scrollTo({top: 0, behavior: 'smooth'});
       }
     });
 
