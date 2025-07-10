@@ -40,3 +40,22 @@
   window.addEventListener('scroll', updateProgressBar);
   window.addEventListener('resize', updateProgressBar);
   document.addEventListener('DOMContentLoaded', initProgress);
+
+      // Tooltip update logic
+      function updateTooltip(progress) {
+        const tooltip = document.getElementById('progress-tooltip');
+        tooltip.textContent = Math.round(progress * 100) + '%';
+        tooltip.style.left = `calc(${progress * 100}% - 20px)`;
+      }
+      // Initial value
+      updateTooltip(0);
+      // Listen for progress bar updates
+      function updateTooltipOnScroll() {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? (scrollTop / docHeight) : 0;
+        updateTooltip(progress);
+      }
+      window.addEventListener('scroll', updateTooltipOnScroll);
+      window.addEventListener('resize', updateTooltipOnScroll);
+      document.addEventListener('DOMContentLoaded', updateTooltipOnScroll);
