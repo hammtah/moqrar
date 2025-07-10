@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PDF Pages Viewer</title>
+  <style>
+    body {
+      background: #f4f4f4;
+      font-family: sans-serif;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    img {
+      width: 100%; 
+      height: auto;
+      margin: 10px; 
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+    }
+    #progress-bar-container {
+      position: fixed;
+      left: 8px;
+      bottom: 0;
+      width: calc(100% - 16px);
+      height: 8px;
+      background: rgba(0,0,0,0.08);
+      z-index: 1000;
+    }
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2dc27c, #2de891);
+      border-radius: 8px;
+      transition: width 0.2s;
+    }
+  </style>
+</head>
+<body>
+  <img src="images/page_67.jpg" alt="Page 67">
+  <img src="images/page_68.jpg" alt="Page 68">
+  <img src="images/page_69.jpg" alt="Page 69">
+  <img src="images/page_70.jpg" alt="Page 70">
+  <img src="images/page_71.jpg" alt="Page 71">
+  <img src="images/page_72.jpg" alt="Page 72">
+  <img src="images/page_73.jpg" alt="Page 73">
+  <img src="images/page_74.jpg" alt="Page 74">
+  <img src="images/page_75.jpg" alt="Page 75">
+  <img src="images/page_76.jpg" alt="Page 76">
+  <img src="images/page_77.jpg" alt="Page 77">
+  <img src="images/page_78.jpg" alt="Page 78">
+  <img src="images/page_79.jpg" alt="Page 79">
+  <img src="images/page_80.jpg" alt="Page 80">
+  <img src="images/page_81.jpg" alt="Page 81">
+  <img src="images/page_82.jpg" alt="Page 82">
+  <img src="images/page_83.jpg" alt="Page 83">
+  <img src="images/page_84.jpg" alt="Page 84">
+  <img src="images/page_85.jpg" alt="Page 85">
+  <img src="images/page_86.jpg" alt="Page 86">
+  <img src="images/page_87.jpg" alt="Page 87">
+  <img src="images/page_88.jpg" alt="Page 88">
+  <img src="images/page_89.jpg" alt="Page 89">
+  <img src="images/page_90.jpg" alt="Page 90">
+  <img src="images/page_91.jpg" alt="Page 91">
+  <img src="images/page_92.jpg" alt="Page 92">
+  <img src="images/page_93.jpg" alt="Page 93">
+  <img src="images/page_94.jpg" alt="Page 94">
+
+  <div id="progress-bar-container">
+    <div id="progress-bar"></div>
+    <div id="progress-tooltip" style="position:absolute;left:0;transform:translateY(-120%);bottom:-150%;background:#222;color:#fff;padding:4px 8px;border-radius:6px;font-size:12px;white-space:nowrap;pointer-events:none;z-index:1002;">0%</div>
+  </div>
+  <!-- Quiz Button -->
+  <div style="width:100%;display:flex;justify-content:center;margin:24px 0 16px 0;position:relative;z-index:1001;">
+    <a href="quiz.html" style="background:linear-gradient(90deg,#2dc27c,#2de891);color:white;padding:16px 32px;border:none;border-radius:8px;font-size:1.2em;font-weight:bold;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.15);transition:background 0.2s;cursor:pointer;">Take the Quiz</a>
+  </div>
+  <script type="module" src="/progress.js"></script>
+</body>
+</html>

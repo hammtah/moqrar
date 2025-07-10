@@ -2,16 +2,7 @@ import os
 from datetime import datetime, timedelta
 from pdf2image import convert_from_path
 import json
-import firebase_admin
 import shutil
-from firebase_admin import credentials, firestore
-
-# Initialize Firebase once
-if not firebase_admin._apps:
-    cred = credentials.Certificate("moqrar-a349a-firebase-adminsdk-fbsvc-4303fc5958.json")
-    firebase_admin.initialize_app(cred)
-
-db = firestore.client()
 
 # --- Inputs ---
 pdf_path = input("Enter the path to the PDF file: ").strip()
@@ -132,8 +123,8 @@ moqrar = {
     "progress": 0
 }
 # Push to Firebase
-doc_ref = db.collection("moqrarat").add(moqrar)
-print("✅ Uploaded to Firebase")
+# doc_ref = db.collection("moqrarat").add(moqrar)
+# print("✅ Uploaded to Firebase")
 
 # Path to data.json (assuming it is in the current working directory)
 data_json_path = "data.json"
