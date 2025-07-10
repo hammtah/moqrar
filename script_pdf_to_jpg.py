@@ -69,6 +69,22 @@ with open(html_path, "w", encoding="utf-8") as f:
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
       border-radius: 10px;
     }
+    #progress-bar-container {
+      position: fixed;
+      left: 8px;
+      bottom: 0;
+      width: calc(100% - 16px);
+      height: 8px;
+      background: rgba(0,0,0,0.08);
+      z-index: 1000;
+    }
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2dc27c, #2de891);
+      border-radius: 8px;
+      transition: width 0.2s;
+    }
   </style>
 </head>
 <body>
@@ -79,6 +95,15 @@ with open(html_path, "w", encoding="utf-8") as f:
         f.write(f'  <img src="images/page_{page_num}.jpg" alt="Page {page_num}">\n')
 
     f.write("""
+  <div id="progress-bar-container">
+    <div id="progress-bar"></div>
+    <div id="progress-tooltip" style="position:absolute;left:0;transform:translateY(-120%);bottom:-150%;background:#222;color:#fff;padding:4px 8px;border-radius:6px;font-size:12px;white-space:nowrap;pointer-events:none;z-index:1002;">0%</div>
+  </div>
+  <!-- Quiz Button -->
+  <div style="width:100%;display:flex;justify-content:center;margin:24px 0 16px 0;position:relative;z-index:1001;">
+    <a href="quiz.html" style="background:linear-gradient(90deg,#2dc27c,#2de891);color:white;padding:16px 32px;border:none;border-radius:8px;font-size:1.2em;font-weight:bold;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.15);transition:background 0.2s;cursor:pointer;">Take the Quiz</a>
+  </div>
+  <script type="module" src="/progress.js"></script>
 </body>
 </html>
 """)
