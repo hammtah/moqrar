@@ -2,13 +2,23 @@ import os
 from datetime import datetime, timedelta
 from pdf2image import convert_from_path
 import json
+import firebase_admin
+import shutil
+from firebase_admin import credentials, firestore
+
+# Initialize Firebase once
+if not firebase_admin._apps:
+    cred = credentials.Certificate("moqrar-a349a-firebase-adminsdk-fbsvc-4303fc5958.json")
+    firebase_admin.initialize_app(cred)
+
+db = firestore.client()
 
 # --- Inputs ---
 pdf_path = input("Enter the path to the PDF file: ").strip()
 start_page = int(input("Enter the start page (inclusive): ").strip())
 end_page = int(input("Enter the end page (inclusive): ").strip())
-name = input("Enter the name for the entry: ").strip()
-
+# name = input("Enter the name for the entry: ").strip()
+name = "(رقائق القرآن( ٦٧ - ٩٤"
 # --- Folder setup ---
 tomorrow = datetime.now() + timedelta(days=1)
 base_folder = os.path.join("pages", tomorrow.strftime("%d-%m-%Y"))
@@ -110,14 +120,20 @@ with open(html_path, "w", encoding="utf-8") as f:
 
 print(f"✅ index.html created at {html_path}")
 
-# Prepare new entry data
-entry = {
+shutil.copy("quiz.html", os.path.join(base_folder, "quiz.html"))
+print(f"✅ quiz.html copied to {base_folder}")
+# Construct the moqrar object
+moqrar = {
     "name": name,
     "url": os.path.join("pages", tomorrow.strftime("%d-%m-%Y"), "index.html").replace("\\", "/"),
     "image": os.path.join("pages", tomorrow.strftime("%d-%m-%Y"), "images", "cover.jpg").replace("\\", "/"),
     "date": tomorrow.strftime("%d-%m-%Y"),
-    "completed": False
+    "completed": False,
+    "progress": 0
 }
+# Push to Firebase
+doc_ref = db.collection("moqrarat").add(moqrar)
+print("✅ Uploaded to Firebase")
 
 # Path to data.json (assuming it is in the current working directory)
 data_json_path = "data.json"
@@ -135,7 +151,7 @@ else:
     data = []
 
 # Append the new entry
-data.append(entry)
+data.append(moqrar)
 
 # Write back to data.json
 with open(data_json_path, "w", encoding="utf-8") as f:
