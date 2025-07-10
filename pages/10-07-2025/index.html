@@ -77,7 +77,9 @@
 <div id="progress-bar-container">
   <div id="progress-bar"></div>
 </div>
-<script>
+<script type="module">
+    import {saveData, loadData, renderMoqrarat, updateProgress, getMoqrar} from '/firebase.js';
+              
   let lastSentProgress = null;
   function getDateFromPath() {
     // Extracts the date from the folder name in the URL (e.g., /pages/10-07-2025/)
@@ -90,11 +92,7 @@
     // Only send if progress changed by at least 1%
     if (lastSentProgress !== null && Math.abs(progress - lastSentProgress) < 0.01) return;
     lastSentProgress = progress;
-    fetch('https://13ea4b67444a.ngrok-free.app/save_progress', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ date, progress })
-    });
+    updateProgress(progress, date);
   }
   function updateProgressBar() {
     const scrollTop = window.scrollY || document.documentElement.scrollTop;
@@ -103,8 +101,24 @@
     document.getElementById('progress-bar').style.width = (progress * 100) + '%';
     saveProgress(progress);
   }
+  function initProgress(){
+    const date = getDateFromPath();
+    if (!date) return;
+    getMoqrar(date).then(moqrar => {
+      if (moqrar && moqrar.progress) {
+        const progress = parseFloat(moqrar.progress);
+        document.getElementById('progress-bar').style.width = (progress * 100) + '%';
+        lastSentProgress = progress;
+        // Scroll to the saved progress position
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (docHeight > 0) {
+            window.scrollTo(0, progress * docHeight);
+        }
+      }
+    });
+  }
   window.addEventListener('scroll', updateProgressBar);
   window.addEventListener('resize', updateProgressBar);
-  document.addEventListener('DOMContentLoaded', updateProgressBar);
+  document.addEventListener('DOMContentLoaded', initProgress);
 </script>
 </html>
